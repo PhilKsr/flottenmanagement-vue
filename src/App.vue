@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <TabMenu :model="items" />
+    <TabMenu :model="items" :exact="false" />
+    <h1 class="text-8xl">FUCK</h1>
     <router-view />
   </div>
 </template>
