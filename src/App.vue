@@ -1,32 +1,33 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </nav>
+    <TabMenu :model="items" :exact="false" />
+    <h1 class="text-8xl">FUCK</h1>
     <router-view />
   </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts">
+import TabMenu from "primevue/tabmenu";
 
-nav {
-  padding: 30px;
-}
+export default {
+  name: "app",
+  components: { TabMenu },
+  data() {
+    return {
+      items: [
+        { label: "Home", to: "/" },
+        {
+          label: "Vehicles",
+          to: "/vehicles",
+        },
+        {
+          label: "Vehicletypes",
+          to: "/vehicle-types",
+        },
+      ],
+    };
+  },
+};
+</script>
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+<style></style>
