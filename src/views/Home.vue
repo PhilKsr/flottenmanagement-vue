@@ -1,19 +1,27 @@
 <template>
-  <h1></h1>
+  <DataTable :value="vehicleTypes" responsiveLayout="scroll">
+    <Column field="name" header="Fahrzeugtyp"></Column>
+    <Column field="vehicle" header="Fahrzeug"></Column>
+  </DataTable>
 </template>
 
 <script lang="ts">
-import { getVehicles } from "@/lib/apiCallHelpers";
-export default {
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import { getVehicleTypes } from "@/lib/apiCallHelpers";
+import Vue from "vue";
+
+export default Vue.extend({
+  components: { DataTable, Column },
   data() {
     return {
-      columns: null,
-      cars: null,
+      vehicleTypes: null,
     };
   },
   async created() {
-    const vehicles = await getVehicles();
-    console.log(vehicles);
+    const initialTypes = await getVehicleTypes();
+    console.log(initialTypes);
+    this.vehicleTypes = initialTypes;
   },
-};
+});
 </script>
