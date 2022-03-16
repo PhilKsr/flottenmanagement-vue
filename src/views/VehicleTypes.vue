@@ -29,6 +29,42 @@
     </DataTable>
 
     <Dialog
+      :visible.sync="newTypeDialog"
+      :style="{ width: '450px' }"
+      header="Fahrzeugtyp"
+      :modal="true"
+      class="p-fluid"
+    >
+      <div class="field">
+        <label for="name">Name</label>
+        <InputText
+          id="name"
+          v-model.trim="newVehicleType"
+          required="true"
+          autofocus
+          :class="{ 'p-invalid': submitted && !newVehicleType }"
+        />
+        <small class="p-invalid" v-if="submitted && !newVehicleType"
+          >Name is required.</small
+        >
+      </div>
+      <template #footer>
+        <Button
+          label="Cancel"
+          icon="pi pi-times"
+          class="p-button-text"
+          @click="hideDialog"
+        />
+        <Button
+          label="Save"
+          icon="pi pi-check"
+          class="p-button-text"
+          @click="saveNewType"
+        />
+      </template>
+    </Dialog>
+
+    <Dialog
       :visible.sync="typeDialog"
       :style="{ width: '450px' }"
       header="Fahrzeugtyp"
@@ -106,6 +142,7 @@ import InputText from "primevue/inputtext";
 import {
   deleteVehicleType,
   getVehicleTypes,
+  saveVehicleType,
   updateVehicleType,
 } from "@/lib/apiCallHelpers";
 import VehicleType from "@/types/VehicleType";
@@ -114,9 +151,10 @@ interface VehicleTypesData {
   vehicleTypes: [];
   typeDialog: boolean;
   deleteTypeDialog: boolean;
+  newTypeDialog: boolean;
   vehicleType: VehicleType;
   submitted: boolean;
-  newVehicleType: { name: string };
+  newVehicleType: string;
 }
 
 export default Vue.extend({
@@ -126,9 +164,10 @@ export default Vue.extend({
       vehicleTypes: [],
       typeDialog: false,
       deleteTypeDialog: false,
+      newTypeDialog: false,
       vehicleType: { name: "", id: 0 },
       submitted: false,
-      newVehicleType: { name: "" },
+      newVehicleType: "",
     };
   },
   async created() {
@@ -137,26 +176,31 @@ export default Vue.extend({
   },
   methods: {
     openNew() {
-      this.newVehicleType = { name: "" };
-      this.submitted = false;
-      this.typeDialog = true;
+      this.newTypeDialog = true;
     },
     hideDialog() {
       this.typeDialog = false;
+      this.newTypeDialog = false;
       this.submitted = false;
     },
-    saveNewType() {
+    async saveNewType() {
       this.submitted = true;
-      this.typeDialog = false;
+      const updatedVehicleType = {
+        name: this.newVehicleType,
+      };
+      await saveVehicleType(updatedVehicleType);
+      this.vehicleTypes = await getVehicleTypes();
+      this.newTypeDialog = false;
     },
-    saveEditedType() {
+    async saveEditedType() {
       this.submitted = true;
       const updatedVehicleType = {
         id: this.vehicleType.id,
         name: this.vehicleType.name,
       };
       // Route is n ot working?
-      updateVehicleType(updatedVehicleType);
+      await updateVehicleType(updatedVehicleType);
+      this.vehicleTypes = await getVehicleTypes();
       this.vehicleType = { name: "", id: 0 };
       this.typeDialog = false;
     },
@@ -168,12 +212,13 @@ export default Vue.extend({
       this.vehicleType = presentVehicleType;
       this.deleteTypeDialog = true;
     },
-    deleteType() {
+    async deleteType() {
       const updatedVehicleType = {
         id: this.vehicleType.id,
         name: this.vehicleType.name,
       };
-      deleteVehicleType(updatedVehicleType);
+      await deleteVehicleType(updatedVehicleType);
+      this.vehicleTypes = await getVehicleTypes();
       this.vehicleType = { name: "", id: 0 };
       this.deleteTypeDialog = false;
     },
