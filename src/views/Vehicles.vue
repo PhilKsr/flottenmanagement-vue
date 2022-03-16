@@ -19,8 +19,16 @@
         field="maxGeschwindigkeit"
         header="Geschwindigkeit in Km/h"
       ></Column>
-      <Column field="fahrzeugtyp" header="Fahrzeugtyp"></Column>
-      <Column field="istFahrbereit" header="Fahrbereit"></Column>
+      <Column field="fahrzeugtyp" header="Fahrzeugtyp">
+        <template #body="slotProps">
+          <span>{{ slotProps.data.fahrzeugtyp.name }}</span>
+        </template>
+      </Column>
+      <Column field="istFahrbereit" header="Fahrbereit">
+        <template #body="slotProps">
+          <span>{{ slotProps.data.istFahrbereit ? "🟢" : "🔴" }}</span>
+        </template>
+      </Column>
 
       <Column :styles="{ 'min-width': '8rem' }">
         <template #body="slotProps">
@@ -55,7 +63,62 @@
           :class="{ 'p-invalid': submitted && !newVehicle }"
         />
         <small class="p-invalid" v-if="submitted && !newVehicle"
-          >Name is required.</small
+          >Name ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="gewicht">Gewicht in Kg</label>
+        <InputNumber
+          id="gewicht"
+          v-model.trim="newVehicle"
+          required="true"
+          autofocus
+          :class="{ 'p-invalid': submitted && !newVehicle }"
+        />
+        <small class="p-invalid" v-if="submitted && !newVehicle"
+          >Gewicht ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="anzahlAchsen">Achsen</label>
+        <InputNumber
+          id="anzahlAchsen"
+          v-model.trim="newVehicle"
+          required="true"
+          autofocus
+          :class="{ 'p-invalid': submitted && !newVehicle }"
+        />
+        <small class="p-invalid" v-if="submitted && !newVehicle"
+          >Anzahl der Achsen ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="geschwindigkeit">Geschwindigkeit in Km/h</label>
+        <InputNumber
+          id="geschwindigkeit"
+          v-model.trim="newVehicle"
+          required="true"
+          autofocus
+          :class="{ 'p-invalid': submitted && !newVehicle }"
+        />
+        <small class="p-invalid" v-if="submitted && !newVehicle"
+          >Geschwindigkeit ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="fahrzeugtyp">Fahrzeugtyp</label>
+        <Dropdown
+          placeholder="Fahrzeugtyp wählen"
+          id="fahrzeugtyp"
+          v-model.trim="newVehicle"
+          required="true"
+          autofocus
+          :class="{ 'p-invalid': submitted && !newVehicle }"
+          :options="vehicleTypes"
+          optionLabel="name"
+        />
+        <small class="p-invalid" v-if="submitted && !newVehicle"
+          >Bitte Fahrzeugtyp wählen.</small
         >
       </div>
       <template #footer>
@@ -149,13 +212,17 @@ import Button from "primevue/button";
 import Toolbar from "primevue/toolbar";
 import Dialog from "primevue/dialog";
 import InputText from "primevue/inputtext";
+import InputNumber from "primevue/inputnumber";
+import Dropdown from "primevue/dropdown";
 import {
   deleteVehicle,
   getVehicles,
+  getVehicleTypes,
   saveVehicle,
   updateVehicle,
 } from "@/lib/apiCallHelpers";
 import Vehicle from "@/types/Vehicle";
+import VehicleType from "@/types/VehicleType";
 
 interface VehiclesData {
   vehicles: [];
@@ -165,10 +232,20 @@ interface VehiclesData {
   vehicle: Vehicle;
   submitted: boolean;
   newVehicle: string;
+  vehicleType: [];
 }
 
 export default Vue.extend({
-  components: { DataTable, Column, Button, Toolbar, Dialog, InputText },
+  components: {
+    DataTable,
+    Column,
+    Button,
+    Toolbar,
+    Dialog,
+    InputText,
+    InputNumber,
+    Dropdown,
+  },
   data(): VehiclesData {
     return {
       vehicles: [],
@@ -178,11 +255,14 @@ export default Vue.extend({
       vehicle: { name: "", id: 0 },
       submitted: false,
       newVehicle: "",
+      vehicleType: [],
     };
   },
   async created() {
     const initialVehicles = await getVehicles();
     this.vehicles = initialVehicles;
+    const initialVehicleTypes = await getVehicleTypes();
+    this.vehicleType = initialVehicleTypes;
   },
   methods: {
     openNew() {
