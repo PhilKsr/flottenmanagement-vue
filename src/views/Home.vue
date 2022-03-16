@@ -6,10 +6,10 @@
 </template>
 
 <script lang="ts">
+import Vue from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { getVehicleTypes } from "@/lib/apiCallHelpers";
-import Vue from "vue";
 
 export default Vue.extend({
   components: { DataTable, Column },
@@ -20,7 +20,6 @@ export default Vue.extend({
   },
   async created() {
     const initialTypes = await getVehicleTypes();
-    console.log(initialTypes);
     this.vehicleTypes = initialTypes;
   },
 });

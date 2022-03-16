@@ -1,14 +1,17 @@
 <template>
   <div id="app">
-    <TabMenu :model="items" :exact="false" />
+    <div>
+      <TabMenu :model="items" />
+    </div>
     <router-view />
   </div>
 </template>
 
 <script lang="ts">
+import Vue from "vue";
 import TabMenu from "primevue/tabmenu";
 
-export default {
+export default Vue.extend({
   name: "app",
   components: { TabMenu },
   data() {
@@ -26,7 +29,7 @@ export default {
       ],
     };
   },
-};
+});
 </script>
 
 <style></style>
