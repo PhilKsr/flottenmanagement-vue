@@ -1,7 +1,7 @@
 <template>
   <DataTable :value="vehicleTypes" responsiveLayout="scroll">
-    <Column field="name" header="Fahrzeugtyp"></Column>
-    <Column field="vehicle" header="Fahrzeug" v-model="vehicles"> </Column>
+    <Column field="fahrzeugtyp" header="Fahrzeugtyp"></Column>
+    <Column field="fahrzeuge" header="Fahrzeug"></Column>
   </DataTable>
 </template>
 
@@ -10,6 +10,8 @@ import Vue from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { getVehicles, getVehicleTypes } from "@/lib/apiCallHelpers";
+import VehicleType from "@/types/VehicleType";
+import Vehicle from "@/types/Vehicle";
 
 export default Vue.extend({
   components: { DataTable, Column },
@@ -21,9 +23,14 @@ export default Vue.extend({
   },
   async created() {
     const initialTypes = await getVehicleTypes();
-    this.vehicleTypes = initialTypes;
     const initialVehicles = await getVehicles();
-    this.vehicles = initialVehicles;
+    const typesWithVehicles = initialTypes.map((type: VehicleType) => {
+      const matchingVehicles = initialVehicles
+        .filter((vehicle: Vehicle) => vehicle.fahrzeugtyp.id === type.id)
+        .map((vehicle: Vehicle) => vehicle.name);
+      return { fahrzeugtyp: type.name, fahrzeuge: matchingVehicles.join(", ") };
+    });
+    this.vehicleTypes = typesWithVehicles;
   },
 });
 </script>
