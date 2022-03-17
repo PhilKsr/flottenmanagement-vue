@@ -1,7 +1,7 @@
 <template>
   <DataTable :value="vehicleTypes" responsiveLayout="scroll">
     <Column field="name" header="Fahrzeugtyp"></Column>
-    <Column field="vehicle" header="Fahrzeug"> </Column>
+    <Column field="vehicle" header="Fahrzeug" v-model="vehicles"> </Column>
   </DataTable>
 </template>
 
