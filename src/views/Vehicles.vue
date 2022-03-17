@@ -356,9 +356,9 @@ export default Vue.extend({
       vehicleDialog: false,
       deleteVehicleDialog: false,
       newVehicleDialog: false,
-      vehicle: null,
+      vehicle: {},
       submitted: false,
-      newVehicle: null,
+      newVehicle: {},
       vehicleTypes: [],
     };
   },
