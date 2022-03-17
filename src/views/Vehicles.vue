@@ -19,8 +19,16 @@
         field="maxGeschwindigkeit"
         header="Geschwindigkeit in Km/h"
       ></Column>
-      <Column field="fahrzeugtyp" header="Fahrzeugtyp"></Column>
-      <Column field="istFahrbereit" header="Fahrbereit"></Column>
+      <Column field="fahrzeugtyp" header="Fahrzeugtyp">
+        <template #body="slotProps">
+          <span>{{ slotProps.data.fahrzeugtyp.name }}</span>
+        </template>
+      </Column>
+      <Column field="istFahrbereit" header="Fahrbereit">
+        <template #body="slotProps">
+          <span>{{ slotProps.data.istFahrbereit ? "🟢" : "🔴" }}</span>
+        </template>
+      </Column>
 
       <Column :styles="{ 'min-width': '8rem' }">
         <template #body="slotProps">
@@ -49,13 +57,91 @@
         <label for="name">Name</label>
         <InputText
           id="name"
-          v-model.trim="newVehicle"
+          v-model.trim="newVehicle.name"
+          required="true"
+          :class="{ 'p-invalid': submitted && !newVehicle }"
+        />
+        <small class="p-invalid" v-if="submitted && !newVehicle"
+          >Name ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="gewicht">Gewicht in Kg</label>
+        <InputNumber
+          id="gewicht"
+          v-model.trim="newVehicle.gewicht"
           required="true"
           autofocus
           :class="{ 'p-invalid': submitted && !newVehicle }"
         />
         <small class="p-invalid" v-if="submitted && !newVehicle"
-          >Name is required.</small
+          >Gewicht ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="anzahlAchsen">Achsen</label>
+        <InputNumber
+          id="anzahlAchsen"
+          v-model.trim="newVehicle.anzahlAchsen"
+          required="true"
+          :class="{ 'p-invalid': submitted && !newVehicle }"
+        />
+        <small class="p-invalid" v-if="submitted && !newVehicle"
+          >Anzahl der Achsen ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="geschwindigkeit">Geschwindigkeit in Km/h</label>
+        <InputNumber
+          id="geschwindigkeit"
+          v-model.trim="newVehicle.maxGeschwindigkeit"
+          required="true"
+          :class="{ 'p-invalid': submitted && !newVehicle }"
+        />
+        <small class="p-invalid" v-if="submitted && !newVehicle"
+          >Geschwindigkeit ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="erstzulassung">Erstzulassung</label>
+        <Calendar
+          dateFormat="dd.mm.yy"
+          id="erstzulassung"
+          v-model.trim="newVehicle.erstzulassung"
+          required="true"
+          :class="{ 'p-invalid': submitted && !newVehicle }"
+        />
+        <small class="p-invalid" v-if="submitted && !newVehicle"
+          >Datum erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="fahrzeugtyp">Fahrzeugtyp</label>
+        <Dropdown
+          placeholder="Fahrzeugtyp wählen"
+          id="fahrzeugtyp"
+          v-model.trim="newVehicle.fahrzeugtyp"
+          required="true"
+          :class="{ 'p-invalid': submitted && !newVehicle }"
+          :options="vehicleTypes"
+          optionLabel="name"
+          optionValue="id"
+        />
+        <small class="p-invalid" v-if="submitted && !newVehicle"
+          >Bitte Fahrzeugtyp wählen.</small
+        >
+      </div>
+      <div class="field">
+        <label for="istFahrbereit">Fahrbereit</label>
+        <Checkbox
+          id="istFahrbereit"
+          v-model.trim="newVehicle.istFahrbereit"
+          required="true"
+          :class="{ 'p-invalid': submitted && !newVehicle }"
+          :binary="true"
+        />
+        <small class="p-invalid" v-if="submitted && !newVehicle"
+          >Ist das Fahrzeug fahrbereit?</small
         >
       </div>
       <template #footer>
@@ -87,11 +173,89 @@
           id="name"
           v-model.trim="vehicle.name"
           required="true"
-          autofocus
-          :class="{ 'p-invalid': submitted && !vehicle.name }"
+          :class="{ 'p-invalid': submitted && !vehicle }"
         />
-        <small class="p-invalid" v-if="submitted && !vehicle.name"
-          >Name is required.</small
+        <small class="p-invalid" v-if="submitted && !vehicle"
+          >Name ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="gewicht">Gewicht in Kg</label>
+        <InputNumber
+          id="gewicht"
+          v-model.trim="vehicle.gewicht"
+          required="true"
+          autofocus
+          :class="{ 'p-invalid': submitted && !vehicle }"
+        />
+        <small class="p-invalid" v-if="submitted && !vehicle"
+          >Gewicht ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="anzahlAchsen">Achsen</label>
+        <InputNumber
+          id="anzahlAchsen"
+          v-model.trim="vehicle.anzahlAchsen"
+          required="true"
+          :class="{ 'p-invalid': submitted && !vehicle }"
+        />
+        <small class="p-invalid" v-if="submitted && !vehicle"
+          >Anzahl der Achsen ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="geschwindigkeit">Geschwindigkeit in Km/h</label>
+        <InputNumber
+          id="geschwindigkeit"
+          v-model.trim="vehicle.maxGeschwindigkeit"
+          required="true"
+          :class="{ 'p-invalid': submitted && !vehicle }"
+        />
+        <small class="p-invalid" v-if="submitted && !vehicle"
+          >Geschwindigkeit ist erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="erstzulassung">Erstzulassung</label>
+        <Calendar
+          dateFormat="dd.mm.yy"
+          id="erstzulassung"
+          v-model.trim="vehicle.erstzulassung"
+          required="true"
+          :class="{ 'p-invalid': submitted && !vehicle }"
+        />
+        <small class="p-invalid" v-if="submitted && !vehicle"
+          >Datum erforderlich.</small
+        >
+      </div>
+      <div class="field">
+        <label for="fahrzeugtypId">Fahrzeugtyp</label>
+        <Dropdown
+          placeholder="Fahrzeugtyp wählen"
+          id="fahrzeugtypId"
+          v-model.trim="vehicle.fahrzeugtypId"
+          required="true"
+          :class="{ 'p-invalid': submitted && !vehicle }"
+          :options="vehicleTypes"
+          optionLabel="name"
+          optionValue="id"
+        />
+        <small class="p-invalid" v-if="submitted && !vehicle"
+          >Bitte Fahrzeugtyp wählen.</small
+        >
+      </div>
+      <div class="field">
+        <label for="istFahrbereit">Fahrbereit</label>
+        <Checkbox
+          id="istFahrbereit"
+          v-model.trim="vehicle.istFahrbereit"
+          required="true"
+          :class="{ 'p-invalid': submitted && !vehicle }"
+          :binary="true"
+        />
+        <small class="p-invalid" v-if="submitted && !vehicle"
+          >Ist das Fahrzeug fahrbereit?</small
         >
       </div>
       <template #footer>
@@ -149,40 +313,60 @@ import Button from "primevue/button";
 import Toolbar from "primevue/toolbar";
 import Dialog from "primevue/dialog";
 import InputText from "primevue/inputtext";
+import InputNumber from "primevue/inputnumber";
+import Dropdown from "primevue/dropdown";
+import Checkbox from "primevue/checkbox";
+import Calendar from "primevue/calendar";
 import {
   deleteVehicle,
   getVehicles,
+  getVehicleTypes,
   saveVehicle,
   updateVehicle,
 } from "@/lib/apiCallHelpers";
 import Vehicle from "@/types/Vehicle";
 
 interface VehiclesData {
-  vehicles: [];
+  vehicles: Vehicle[];
   vehicleDialog: boolean;
   deleteVehicleDialog: boolean;
   newVehicleDialog: boolean;
-  vehicle: Vehicle;
+  vehicle: any;
   submitted: boolean;
-  newVehicle: string;
+  newVehicle: any;
+  vehicleTypes: [];
 }
 
 export default Vue.extend({
-  components: { DataTable, Column, Button, Toolbar, Dialog, InputText },
+  components: {
+    DataTable,
+    Column,
+    Button,
+    Toolbar,
+    Dialog,
+    InputText,
+    InputNumber,
+    Dropdown,
+    Checkbox,
+    Calendar,
+  },
   data(): VehiclesData {
     return {
       vehicles: [],
       vehicleDialog: false,
       deleteVehicleDialog: false,
       newVehicleDialog: false,
-      vehicle: { name: "", id: 0 },
+      vehicle: {},
       submitted: false,
-      newVehicle: "",
+      newVehicle: {},
+      vehicleTypes: [],
     };
   },
   async created() {
     const initialVehicles = await getVehicles();
     this.vehicles = initialVehicles;
+    const initialVehicleTypes = await getVehicleTypes();
+    this.vehicleTypes = initialVehicleTypes;
   },
   methods: {
     openNew() {
@@ -195,23 +379,17 @@ export default Vue.extend({
     },
     async saveNewVehicle() {
       this.submitted = true;
-      const updatedVehicle = {
-        name: this.newVehicle,
-      };
-      await saveVehicle(updatedVehicle);
+
+      await saveVehicle(this.newVehicle);
       this.vehicles = await getVehicles();
       this.newVehicleDialog = false;
     },
     async saveEditedVehicle() {
       this.submitted = true;
-      const updatedVehicle = {
-        id: this.vehicle.id,
-        name: this.vehicle.name,
-      };
       // Route is n ot working?
-      await updateVehicle(updatedVehicle);
+      await updateVehicle(this.vehicle);
       this.vehicles = await getVehicles();
-      this.vehicle = { name: "", id: 0 };
+      this.vehicle = {};
       this.vehicleDialog = false;
     },
     editVehicle(presentVehicle: Vehicle) {
@@ -223,13 +401,9 @@ export default Vue.extend({
       this.deleteVehicleDialog = true;
     },
     async deleteVehicle() {
-      const updatedVehicle = {
-        id: this.vehicle.id,
-        name: this.vehicle.name,
-      };
-      await deleteVehicle(updatedVehicle);
+      await deleteVehicle(this.vehicle);
       this.vehicles = await getVehicles();
-      this.vehicle = { name: "", id: 0 };
+      this.vehicle = {};
       this.deleteVehicleDialog = false;
     },
   },
